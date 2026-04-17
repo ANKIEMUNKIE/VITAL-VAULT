@@ -40,7 +40,24 @@ async def lifespan(app: FastAPI):  # type: ignore[no-untyped-def]
     """Application lifespan: startup and shutdown events."""
     logger.info("Vital-Vault API starting up (%s)", settings.APP_ENV)
 
-    # Ensure S3 bucket exists on startup
+    # 1. Run database migrations automatically on boot (since Render Shell isn't free)
+    try:
+        import subprocess
+        logger.info("Running database migrations...")
+        result = subprocess.run(
+            ["alembic", "upgrade", "head"], 
+            capture_output=True, 
+            text=True, 
+            check=False
+        )
+        if result.returncode == 0:
+            logger.info("Migrations ran successfully!")
+        else:
+            logger.error(f"Migration error: {result.stderr}")
+    except Exception as e:
+        logger.error(f"Failed to run migrations: {e}")
+
+    # 2. Ensure S3 bucket exists on startup
     try:
         from app.core.storage import ensure_bucket_exists
 
