@@ -1,0 +1,70 @@
+services:
+  # ─── FastAPI Web Service ───────────────────────────────────────────────────
+  - type: web
+    name: vital-vault-api
+    runtime: docker
+    dockerfilePath: ./docker/Dockerfile.api
+    dockerContext: .
+    plan: free
+    healthCheckPath: /health
+    envVars:
+      - key: APP_ENV
+        value: production
+      - key: DEBUG
+        value: "false"
+      - key: SECRET_KEY
+        sync: false           # Set this in Render dashboard manually
+      - key: DATABASE_URL
+        sync: false
+      - key: REDIS_URL
+        sync: false
+      - key: S3_ENDPOINT_URL
+        sync: false
+      - key: S3_ACCESS_KEY
+        sync: false
+      - key: S3_SECRET_KEY
+        sync: false
+      - key: S3_BUCKET_NAME
+        value: vital-vault-records
+      - key: S3_REGION
+        value: auto
+      - key: CEREBRAS_API_KEY
+        sync: false
+      - key: ALLOWED_ORIGINS
+        sync: false           # Set to your Vercel URL e.g. https://vital-vault.vercel.app
+
+  # ─── Celery Worker (OCR + AI + Notifications + Beat) ──────────────────────
+  - type: worker
+    name: vital-vault-worker
+    runtime: docker
+    dockerfilePath: ./docker/Dockerfile.worker
+    dockerContext: .
+    plan: free
+    startCommand: >
+      celery -A app.tasks.celery_app:celery_app worker
+      --queues=ocr,ai,notifications,reminders,default
+      --concurrency=2
+      --loglevel=info
+    envVars:
+      - key: APP_ENV
+        value: production
+      - key: DEBUG
+        value: "false"
+      - key: SECRET_KEY
+        sync: false
+      - key: DATABASE_URL
+        sync: false
+      - key: REDIS_URL
+        sync: false
+      - key: S3_ENDPOINT_URL
+        sync: false
+      - key: S3_ACCESS_KEY
+        sync: false
+      - key: S3_SECRET_KEY
+        sync: false
+      - key: S3_BUCKET_NAME
+        value: vital-vault-records
+      - key: S3_REGION
+        value: auto
+      - key: CEREBRAS_API_KEY
+        sync: false
