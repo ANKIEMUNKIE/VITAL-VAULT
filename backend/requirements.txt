@@ -1,0 +1,51 @@
+# Vital-Vault Backend — Python Dependencies
+# Core
+fastapi==0.115.12
+uvicorn[standard]==0.34.2
+pydantic==2.11.3
+pydantic-settings==2.9.1
+python-multipart==0.0.20
+
+# Database
+sqlalchemy[asyncio]==2.0.40
+asyncpg==0.30.0
+alembic==1.15.2
+psycopg2-binary==2.9.10
+
+# Redis & Celery
+celery[redis]==5.5.2
+redis==5.3.0
+flower==2.0.1
+
+# Auth & Security
+python-jose[cryptography]==3.4.0
+passlib[bcrypt]==1.7.4
+pyotp==2.9.0
+slowapi==0.1.9
+
+# Object Storage (aioboto3 pins compatible boto3/botocore automatically)
+aioboto3==15.5.0
+
+# AI & Processing
+pytesseract==0.3.13
+pymupdf==1.25.5
+pillow==11.2.1
+opencv-python-headless==4.11.0.86
+httpx==0.28.1
+
+# Utilities
+python-dotenv==1.1.0
+aiofiles==24.1.0
+
+# Testing
+pytest==8.3.5
+pytest-asyncio==0.26.0
+pytest-cov==6.1.1
+factory-boy==3.3.3
+
+# Email validation (required by Pydantic EmailStr)
+email-validator==2.2.0
+
+# Dev Tools
+ruff==0.11.8
+mypy==1.15.0

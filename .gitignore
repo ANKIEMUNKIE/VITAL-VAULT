@@ -1,0 +1,67 @@
+# Dependencies
+node_modules/
+.pnp
+.pnp.*
+
+# Next.js
+.next/
+out/
+build/
+
+# Debug
+npm-debug.log*
+yarn-debug.log*
+
+# Env files (never commit secrets)
+.env
+.env.*
+!.env.example
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Misc
+*.pem
+*.tsbuildinfo
+next-env.d.ts
+.vercel
+
+# AI / Planning docs (internal only)
+claude.md
+CLAUDE.md
+prd.md
+AGENTS.md
+
+# Python cache & build artifacts
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+.Python
+*.egg-info/
+dist/
+*.so
+.mypy_cache/
+.ruff_cache/
+
+# Celery
+celerybeat-schedule
+celerybeat.pid
+
+# Demo / prototype directories (not part of main source)
+bauhaus/
+stud_suture/
+tactile_precision/
+interactive_timeline_demo_1/
+interactive_timeline_demo_2/
+interactive_timeline_demo_enhanced/
+interactive_timeline_demo_full_lego/
+upload_processing_flow/
+upload_processing_full_lego/
+vital_vault_dashboard/
+vital_vault_dashboard_full_lego/
+vital_vault_dashboard_interactive/
+vital_vault_landing_page/
+vital_vault_landing_page_full_lego/
+vital_vault_landing_page_interactive/

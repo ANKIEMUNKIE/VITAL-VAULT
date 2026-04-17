@@ -1,0 +1,198 @@
+@import "tailwindcss";
+
+@theme inline {
+  --color-primary: #81021F;
+  --color-secondary: #134857;
+  --color-tertiary: #CFB787;
+  --color-success: #9e8123;
+  --color-surface: #1a1a1a;
+  --color-surface-container: #101010;
+  --color-inverse-surface: #F4F4F4;
+  --color-on-surface: #FFFFFF;
+  --color-on-primary: #FFFFFF;
+  --color-on-tertiary: #1a1a1a;
+  --color-on-success: #FFFFFF;
+  
+  --radius-DEFAULT: 3px;
+  --radius-md: 4px;
+  --radius-lg: 6px;
+  --radius-full: 9999px;
+
+  --font-headline: "Manrope", "sans-serif";
+  --font-body: "Inter", "sans-serif";
+}
+
+body {
+  background-color: var(--color-surface);
+  color: var(--color-on-surface);
+}
+
+/* Diagonal Split Background */
+.baseplate-pattern {
+    background: linear-gradient(135deg, #FFFAEF 0%, #FFFAEF 50%, #850321 50%, #850321 100%);
+    background-attachment: fixed;
+}
+
+/* Studs overlaid on top of blocks */
+.studs-light {
+    position: relative;
+}
+.studs-light::after {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 20px;
+    background-image: 
+        radial-gradient(circle at 10px 10px, rgba(255,255,255,0.6) 3px, transparent 4px),
+        radial-gradient(circle at 10px 10px, rgba(0,0,0,0.15) 5px, transparent 6px);
+    background-size: 20px 20px;
+    border-bottom: 2px solid rgba(0,0,0,0.1);
+    border-top-left-radius: inherit;
+    border-top-right-radius: inherit;
+    pointer-events: none;
+    z-index: 10;
+}
+
+.studs-dark {
+    position: relative;
+}
+.studs-dark::after {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 20px;
+    background-image: 
+        radial-gradient(circle at 10px 10px, rgba(255,255,255,0.25) 3px, transparent 4px),
+        radial-gradient(circle at 10px 10px, rgba(0,0,0,0.3) 5px, transparent 6px);
+    background-size: 20px 20px;
+    border-bottom: 2px solid rgba(0,0,0,0.3);
+    border-top-left-radius: inherit;
+    border-top-right-radius: inherit;
+    pointer-events: none;
+    z-index: 10;
+}
+
+/* Strict LEGO Architecture Standards */
+.lego-brick {
+    box-shadow: 0 4px 0 0 rgba(0, 0, 0, 0.4);
+    border: 3px solid #000;
+    border-radius: 8px;
+}
+.lego-interactive {
+    transition: transform 0.15s ease-out, box-shadow 0.15s ease-out;
+    cursor: pointer;
+}
+.lego-interactive:active {
+    transform: translateY(4px) !important;
+    box-shadow: 0 0px 0 0 rgba(0,0,0,0) !important;
+}
+
+/* Staggered Grid Pattern for Hero Background */
+.lego-stud-bg {
+    background-color: var(--color-inverse-surface);
+    background-image: radial-gradient(circle at center, rgba(0,0,0,0.15) 3px, transparent 4px), radial-gradient(circle at center, rgba(255,255,255,0.7) 1px, transparent 2px);
+    background-size: 32px 32px;
+    background-position: 0 0, -1px -1px;
+}
+
+/* ABS Plastic Brick Styling */
+.brick-shadow {
+    box-shadow: 0 4px 0 0 rgba(0, 0, 0, 0.4);
+    border: 3px solid #000;
+}
+.brick-shadow-heavy {
+    box-shadow: 0 8px 0 0 rgba(0, 0, 0, 0.5);
+    border: 3px solid #000;
+}
+
+.lego-card {
+    transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+.lego-card:active {
+    transform: translateY(5px) !important;
+    box-shadow: 0 0px 0 0 rgba(0,0,0,0), inset 0 3px 0 0 rgba(255, 255, 255, 0.4) !important;
+}
+
+@keyframes legoSnapIn {
+    0% {
+        opacity: 0;
+        transform: translateY(40px) scale(0.90) rotateX(-10deg);
+    }
+    70% {
+        transform: translateY(-5px) scale(1.02) rotateX(2deg);
+    }
+    100% {
+        opacity: 1;
+        transform: translateY(0) scale(1) rotateX(0);
+    }
+}
+.lego-animate {
+    opacity: 0;
+    animation: legoSnapIn 0.8s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+    transform-origin: center bottom;
+}
+
+/* --- OVERRIDES PER LATEST REQUEST --- */
+
+/* 1. Background for Everypage — diagonal split */
+body, .baseplate-pattern {
+    background: linear-gradient(135deg, #FFFAEF 0%, #FFFAEF 50%, #850321 50%, #850321 100%) !important;
+    background-attachment: fixed !important;
+}
+
+/* Landing Page override */
+.bg-\[\#FFCB05\] {
+    background: linear-gradient(135deg, #FFFAEF 0%, #FFFAEF 50%, #850321 50%, #850321 100%) !important;
+    background-attachment: fixed !important;
+}
+
+/* 2. Alternating Font Colors: #FCB201 and #0D2818 */
+h1, h2, h3, h4, h5, h6, strong, b {
+    color: #FCB201 !important;
+}
+
+/* Body text alternates between #FCB201 and #0D2818 */
+p, span, div, a, li {
+    color: #FCB201;
+}
+p:nth-child(even), span:nth-child(even), li:nth-child(even) {
+    color: #0D2818;
+}
+
+/* Ensure material icons use the gold color to pop or alternate correctly */
+span.material-symbols-outlined {
+    color: #FCB201 !important;
+}
+
+/* Specific fix for App Modules font color */
+.feature-card h3, .feature-card span, .feature-card p, .feature-card div {
+    color: #0D2818 !important;
+}
+
+/* Keep buttons legible because contrast will be ruined otherwise */
+button, button * {
+    color: #210207 !important;
+}
+
+/* Force entire Dashboard to amber gold — no dark pine alternation */
+.dashboard-amber {
+    color: #FCB201 !important;
+}
+.dashboard-amber *:not(button):not(button *):not(.material-symbols-outlined) {
+    color: #FCB201 !important;
+}
+/* Override Tailwind text-black / text-white inside dashboard */
+.dashboard-amber .text-black,
+.dashboard-amber .text-white,
+.dashboard-amber [class*="text-black"],
+.dashboard-amber [class*="text-white"] {
+    color: #FCB201 !important;
+}
+/* Amber gold for all opacity-based white/black text variants too */
+.dashboard-amber .text-white\/60,
+.dashboard-amber .text-white\/30,
+.dashboard-amber .text-black\/50,
+.dashboard-amber .text-black\/10 {
+    color: #FCB201 !important;
+    opacity: 0.7;
+}

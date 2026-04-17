@@ -1,0 +1,187 @@
+# Vital-Vault Backend — Docker Compose (Development)
+# Full development stack with all services
+
+services:
+  # === FastAPI Application ===
+  api:
+    build:
+      context: .
+      dockerfile: docker/Dockerfile.api
+    container_name: vv-api
+    ports:
+      - "8000:8000"
+    volumes:
+      - .:/app
+    env_file:
+      - .env
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+      minio:
+        condition: service_started
+    networks:
+      - vv-network
+    restart: unless-stopped
+
+  # === Celery Worker: OCR Pipeline ===
+  worker_ocr:
+    build:
+      context: .
+      dockerfile: docker/Dockerfile.worker
+    container_name: vv-worker-ocr
+    command: celery -A app.tasks.celery_app:celery_app worker --queues=ocr --concurrency=4 --loglevel=info
+    volumes:
+      - .:/app
+    env_file:
+      - .env
+    depends_on:
+      - api
+    networks:
+      - vv-network
+    restart: unless-stopped
+
+  # === Celery Worker: AI Extraction ===
+  worker_ai:
+    build:
+      context: .
+      dockerfile: docker/Dockerfile.worker
+    container_name: vv-worker-ai
+    command: celery -A app.tasks.celery_app:celery_app worker --queues=ai --concurrency=2 --loglevel=info
+    volumes:
+      - .:/app
+    env_file:
+      - .env
+    depends_on:
+      - api
+    networks:
+      - vv-network
+    restart: unless-stopped
+
+  # === Celery Worker: Notifications ===
+  worker_notify:
+    build:
+      context: .
+      dockerfile: docker/Dockerfile.worker
+    container_name: vv-worker-notify
+    command: celery -A app.tasks.celery_app:celery_app worker --queues=notifications,reminders,default --concurrency=4 --loglevel=info
+    volumes:
+      - .:/app
+    env_file:
+      - .env
+    depends_on:
+      - api
+    networks:
+      - vv-network
+    restart: unless-stopped
+
+  # === Celery Beat Scheduler ===
+  beat:
+    build:
+      context: .
+      dockerfile: docker/Dockerfile.worker
+    container_name: vv-beat
+    command: celery -A app.tasks.celery_app:celery_app beat --loglevel=info
+    volumes:
+      - .:/app
+    env_file:
+      - .env
+    depends_on:
+      - api
+    networks:
+      - vv-network
+    restart: unless-stopped
+
+  # === PostgreSQL 16 ===
+  postgres:
+    image: postgres:16-alpine
+    container_name: vv-postgres
+    environment:
+      POSTGRES_DB: vitalvault
+      POSTGRES_USER: vitalvault
+      POSTGRES_PASSWORD: vitalvault
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U vitalvault -d vitalvault"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+    networks:
+      - vv-network
+    restart: unless-stopped
+
+  # === Redis 7 (Broker + Cache) ===
+  redis:
+    image: redis:7-alpine
+    container_name: vv-redis
+    ports:
+      - "6379:6379"
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+    networks:
+      - vv-network
+    restart: unless-stopped
+
+  # === MinIO (S3-compatible Object Storage) ===
+  minio:
+    image: minio/minio:latest
+    container_name: vv-minio
+    command: server /data --console-address ":9001"
+    environment:
+      MINIO_ROOT_USER: minioadmin
+      MINIO_ROOT_PASSWORD: minioadmin
+    ports:
+      - "9000:9000"
+      - "9001:9001"
+    volumes:
+      - minio_data:/data
+    networks:
+      - vv-network
+    restart: unless-stopped
+
+  # === Flower (Celery Monitoring — Dev Only) ===
+  flower:
+    build:
+      context: .
+      dockerfile: docker/Dockerfile.worker
+    container_name: vv-flower
+    command: celery -A app.tasks.celery_app:celery_app flower --port=5555
+    ports:
+      - "5555:5555"
+    env_file:
+      - .env
+    depends_on:
+      - redis
+    networks:
+      - vv-network
+    restart: unless-stopped
+
+  # === pgAdmin (DB Admin — Dev Only) ===
+  pgadmin:
+    image: dpage/pgadmin4:latest
+    container_name: vv-pgadmin
+    environment:
+      PGADMIN_DEFAULT_EMAIL: admin@vitalvault.dev
+      PGADMIN_DEFAULT_PASSWORD: admin
+    ports:
+      - "5050:80"
+    depends_on:
+      - postgres
+    networks:
+      - vv-network
+    restart: unless-stopped
+
+volumes:
+  postgres_data:
+  minio_data:
+
+networks:
+  vv-network:
+    driver: bridge
