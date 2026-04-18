@@ -18,8 +18,11 @@ from app.models import Base  # noqa: F401
 # Alembic Config object
 config = context.config
 
-# Set the SQLAlchemy URL from our app settings
-config.set_main_option("sqlalchemy.url", settings.DATABASE_URL)
+# Set the SQLAlchemy URL from our app settings. Use DIRECT_URL if provided.
+migrate_url = settings.DIRECT_URL or settings.DATABASE_URL
+if migrate_url and migrate_url.startswith("postgresql://"):
+    migrate_url = migrate_url.replace("postgresql://", "postgresql+asyncpg://", 1)
+config.set_main_option("sqlalchemy.url", migrate_url)
 
 # Interpret the config file for Python logging
 if config.config_file_name is not None:

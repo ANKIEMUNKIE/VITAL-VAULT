@@ -34,6 +34,7 @@ class Settings(BaseSettings):
 
     # --- Database ---
     DATABASE_URL: str = "postgresql+asyncpg://vitalvault:vitalvault@localhost:5432/vitalvault"
+    DIRECT_URL: str | None = None
     DATABASE_ENCRYPTION_KEY: str = "change-me-encryption-key"
 
     # --- Redis ---
