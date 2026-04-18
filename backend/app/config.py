@@ -25,7 +25,7 @@ class Settings(BaseSettings):
     APP_ENV: str = "development"
     DEBUG: bool = True
     SECRET_KEY: str = "change-me-in-production"
-    ALLOWED_ORIGINS: str = "http://localhost:3000"
+    ALLOWED_ORIGINS: str = "http://localhost:3000,https://vital-vault.vercel.app"
 
     # --- JWT ---
     ACCESS_TOKEN_EXPIRE_MINUTES: int = 15
